@@ -28,8 +28,18 @@ router.get('/:id',
 router.patch('/:id', 
     requireAuth, 
     async (req: Request, res: Response) => {
-        //@TODO try it yourself
-        res.send(500).send("not implemented")
+    const { id } = req.params;
+    const caption = req.body.caption;
+    const url = req.body.url;
+
+    // we received an id?
+    if (!id) {
+        return res.status(400).send('id is required');
+    }
+
+    let item = await FeedItem.findByPk(id);
+    item.update({ caption: caption, url: url });
+    res.send(item);
 });
 
 
@@ -37,6 +47,7 @@ router.patch('/:id',
 router.get('/signed-url/:fileName', 
     requireAuth, 
     async (req: Request, res: Response) => {
+    console.log("\n\n\n\nhello there!\n\n\n\n");
     let { fileName } = req.params;
     const url = AWS.getPutSignedUrl(fileName);
     res.status(201).send({url: url});
@@ -65,7 +76,6 @@ router.post('/',
             caption: caption,
             url: fileName
     });
-
     const saved_item = await item.save();
 
     saved_item.url = AWS.getGetSignedUrl(saved_item.url);
