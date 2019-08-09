@@ -16,4 +16,4 @@ export const config = {
     "host": "",
     "dialect": "postgres"
   }
-}
+};
